@@ -796,12 +796,10 @@ class CarController(CarControllerBase, IntelligentCruiseButtonManagementInterfac
       if orientation_ned is not None and len(orientation_ned) == 3:
         accel_due_to_pitch = math.sin(orientation_ned[1]) * ACCELERATION_DUE_TO_GRAVITY
       accel_pitch_compensated = op_accel + accel_due_to_pitch
-      if accel_pitch_compensated > 0.3 or not CC.longActive:
+      if accel_pitch_compensated > self.precharge_actuate_release or not CC.longActive:
         op_brake_actuate = False
-      elif accel_pitch_compensated < 0.0:
+      elif accel_pitch_compensated < self.precharge_actuate_target:
         op_brake_actuate = True
-      else:
-        op_brake_actuate = False
 
       stopping = CC.actuators.longControlState == LongCtrlState.stopping
       target_speed = float(np.clip(actuators.speed * self.target_speed_multiplier, 0, V_CRUISE_MAX))
