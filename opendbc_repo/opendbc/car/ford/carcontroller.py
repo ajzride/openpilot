@@ -167,6 +167,7 @@ class CarController(CarControllerBase, IntelligentCruiseButtonManagementInterfac
     self.brake_actuate_release = -0.06 # at what accel limit do we release brakes
     self.precharge_actuate_target = -0.12 # at what accel limit do we engage precharge
     self.precharge_actuate_release = -0.06 # at what accel limit do we release precharge
+    self.op_brake_actuate_last = False # init the value for our hysteresis
 
     # # Curvature variables
     self.curvature_lookup_time = 0.42 #from lagd
@@ -796,6 +797,7 @@ class CarController(CarControllerBase, IntelligentCruiseButtonManagementInterfac
       if orientation_ned is not None and len(orientation_ned) == 3:
         accel_due_to_pitch = math.sin(orientation_ned[1]) * ACCELERATION_DUE_TO_GRAVITY
       accel_pitch_compensated = op_accel + accel_due_to_pitch
+      op_brake_actuate = self.op_brake_actuate_last
       if accel_pitch_compensated > self.precharge_actuate_release or not CC.longActive:
         op_brake_actuate = False
       elif accel_pitch_compensated < self.precharge_actuate_target:
@@ -962,6 +964,7 @@ class CarController(CarControllerBase, IntelligentCruiseButtonManagementInterfac
       self.accel = accel
       self.gas = gas
       self._bp_long_active_last = bp_long_used
+      self.op_brake_actaute_last = op_brake_actuate
 
     ### ui ###
     send_ui = (self.main_on_last != main_on) or (self.lkas_enabled_last != CC.latActive) or (self.steer_alert_last != steer_alert)
