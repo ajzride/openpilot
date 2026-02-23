@@ -92,10 +92,9 @@ def apply_ford_curvature_limits(apply_curvature, apply_curvature_last, current_c
 
 
 def apply_creep_compensation(accel: float, v_ego: float) -> float:
-  # Only compensate when decelerating; avoids fighting creep during coast and prevents binary feel
-  creep_accel = np.interp(v_ego, [2., 3.], [0.3, 0.])
-  if accel < 0.0:
-    accel -= creep_accel
+  creep_accel = np.interp(v_ego, [1., 3.], [0.6, 0.])
+  creep_accel = np.interp(accel, [0., 0.2], [creep_accel, 0.])
+  accel -= creep_accel
   return float(accel)
 
 
