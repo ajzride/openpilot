@@ -781,12 +781,14 @@ class CarController(CarControllerBase, IntelligentCruiseButtonManagementInterfac
     if self.CP.openpilotLongitudinalControl and (self.frame % CarControllerParams.ACC_CONTROL_STEP) == 0:
       # First calcualte the stock logic's accel, gas, and brake request
       op_accel = actuators.accel
+      op_gas = op_accel
+      
       if CC.longActive:
         op_accel = apply_creep_compensation(op_accel, CS.out.vEgo)
         op_accel = max(op_accel, self.accel - (3.5 * CarControllerParams.ACC_CONTROL_STEP * DT_CTRL))
       op_accel = float(np.clip(op_accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX))
+      op_gas = float(np.clip(op_gas, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX))
 
-      op_gas = op_accel
       if not CC.longActive or op_gas < CarControllerParams.MIN_GAS:
         op_gas = CarControllerParams.INACTIVE_GAS
 
@@ -797,9 +799,9 @@ class CarController(CarControllerBase, IntelligentCruiseButtonManagementInterfac
         accel_due_to_pitch = math.sin(orientation_ned[1]) * ACCELERATION_DUE_TO_GRAVITY
       accel_pitch_compensated = op_accel + accel_due_to_pitch
       op_brake_actuate = self.op_brake_actuate_last
-      if accel_pitch_compensated > self.precharge_actuate_release or not CC.longActive:
+      if accel_pitch_compensated > self.brake_actuate_release or not CC.longActive:
         op_brake_actuate = False
-      elif accel_pitch_compensated < self.precharge_actuate_target:
+      elif accel_pitch_compensated < self.brake_actuate_target:
         op_brake_actuate = True
 
       stopping = CC.actuators.longControlState == LongCtrlState.stopping
