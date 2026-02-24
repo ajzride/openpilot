@@ -806,6 +806,7 @@ class CarController(CarControllerBase, IntelligentCruiseButtonManagementInterfac
         accel_due_to_pitch = math.sin(CC.orientationNED[1]) * ACCELERATION_DUE_TO_GRAVITY
 
       accel_pitch_compensated = op_accel + accel_due_to_pitch
+      op_brake_actuate = self.op_brake_actuate_last
       if accel_pitch_compensated > 0.3 or not CC.longActive:
         self.op_brake_request = False
       elif accel_pitch_compensated < 0.0:
