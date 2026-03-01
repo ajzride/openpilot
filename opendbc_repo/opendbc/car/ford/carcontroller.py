@@ -527,6 +527,9 @@ class CarController(CarControllerBase, IntelligentCruiseButtonManagementInterfac
                                                                 self.CP)
         lateralUncertainty = self.calculate_lateral_uncertainty(requested_curvature, apply_curvature, max_curvature)
 
+        # for lateral debugging
+        apply_curvature = requested_curvature
+        
         #if reset_steering is 1, set apply_curvature to 0
         if reset_steering == 1:
           apply_curvature = 0.0
