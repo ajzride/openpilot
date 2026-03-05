@@ -55,7 +55,7 @@ def anti_overshoot(apply_curvature, apply_curvature_last, v_ego):
 def apply_ford_curvature_limits(apply_curvature, apply_curvature_last, current_curvature, v_ego_raw, steering_angle, lat_active, CP):
   max_curvature = 1 # large initial value
   # No blending at low speed due to lack of torque wind-up and inaccurate current curvature
-  if v_ego_raw > 9:
+  if v_ego_raw > 9999:
     apply_curvature = np.clip(apply_curvature, current_curvature - CarControllerParams.CURVATURE_ERROR,
                               current_curvature + CarControllerParams.CURVATURE_ERROR)
     max_curvature = abs(current_curvature) + CarControllerParams.CURVATURE_ERROR
@@ -528,7 +528,7 @@ class CarController(CarControllerBase, IntelligentCruiseButtonManagementInterfac
         lateralUncertainty = self.calculate_lateral_uncertainty(requested_curvature, apply_curvature, max_curvature)
 
         # for lateral debugging
-        apply_curvature = requested_curvature
+        # apply_curvature = requested_curvature
         
         #if reset_steering is 1, set apply_curvature to 0
         if reset_steering == 1:
